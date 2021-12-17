@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class SnakeGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	int positionX = 0;
-	int positionY = 0;
+	public static  int positionX = 0;
+	public static  int positionY = 0;
 	int height;
 	int width;
 	@Override
@@ -19,26 +19,13 @@ public class SnakeGdxGame extends ApplicationAdapter {
 		img = new Texture("pacmanghost.png");
 		height = Gdx.graphics.getHeight();
 		width = Gdx.graphics.getWidth();
+		MyInputProcessor ip = new MyInputProcessor();
+		Gdx.input.setInputProcessor(ip);
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(0, 0, 0, 1);
-
-		if(Gdx.input.isTouched()){
-			if(Gdx.input.getX() >= width/2){
-				this.positionX = this.positionX + 2;
-			}else {
-				this.positionX = this.positionX - 2;
-			}
-
-			if(Gdx.input.getY() >= height/2){
-				this.positionY = this.positionY + 2;
-			}else {
-				this.positionY = this.positionY - 2;
-			}
-
-		}
 
 		batch.begin();
 		batch.draw(img, positionX, positionY, 128,128);

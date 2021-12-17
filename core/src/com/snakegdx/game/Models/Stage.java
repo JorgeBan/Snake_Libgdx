@@ -4,32 +4,22 @@ import java.awt.Point;
 
 public class Stage {
     private Snake snake;
-    int width;
-    int height;
-    Point food;
+    private int width;
+    private int height;
+    private Food food;
 
-    public Stage(int length, int high) {
-        super();
-        this.width = length;
-        this.height = high;
-        initSnake();
-        food = createFood();
+    public Stage(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.snake = new Snake(new Point(width/2, height/2));
+        this.food = new Food(new Point(width, height));
     }
 
-    private void initSnake() {
-        snake = new Snake();
-        int x = width/2;
-        int y = height/2;
-        for(int i = 0;i<5;i++) {
-            snake.addTail(new Point(x, y));
-        }
+    public void createFood(){
+        this.food.generateFood();
     }
 
-    private Point createFood(){
-        return new Point(0,0);
-    }
-
-    public Point getFood() {
+    public Food getFood() {
         return food;
     }
 
@@ -41,7 +31,8 @@ public class Stage {
         return width;
     }
 
-    public int getHeight() {
+    public int getHeight()
+    {
         return height;
     }
 }

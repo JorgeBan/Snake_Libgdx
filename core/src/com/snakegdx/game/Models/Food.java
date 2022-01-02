@@ -1,5 +1,7 @@
 package com.snakegdx.game.Models;
 
+import com.snakegdx.game.SnakeGdxGame;
+
 import java.awt.Point;
 import java.util.Random;
 
@@ -7,20 +9,18 @@ public class Food {
 
     private Point position;
     private Random random;
-    private Point limit;
 
-    public Food(Point limit){
+    public Food(){
         this.position = new Point();
-        this.limit = limit;
         this.random = new Random();
     }
 
-    public void generateFood(){
-        this.position.x = random.nextInt(this.limit.x) + 1;
-        this.position.y = random.nextInt(this.limit.y) + 1;
+    public void generateFood(int limitX, int limitY){
+        this.position.x = random.nextInt(limitX - 1);
+        this.position.y = random.nextInt(limitY - 1);
     }
 
-    public Point getFood(){
+    public Point getPosition(){
         return this.position;
     }
 }

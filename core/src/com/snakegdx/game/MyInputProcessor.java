@@ -8,21 +8,43 @@ public class MyInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.D){
-            SnakeGdxGame.positionX += 10;
+        if(!SnakeGdxGame.gameOver){
+            switch (keycode){
+                case Input.Keys.W:
+                    SnakeGdxGame.stage.getSnake().changeDirection('U');
+                    break;
+
+                case Input.Keys.S:
+                    SnakeGdxGame.stage.getSnake().changeDirection('D');
+                    break;
+
+                case Input.Keys.D:
+                    SnakeGdxGame.stage.getSnake().changeDirection('R');
+                    break;
+
+                case Input.Keys.A:
+                    SnakeGdxGame.stage.getSnake().changeDirection('L');
+                    break;
+
+            }
+
+            SnakeGdxGame.stage.getSnake().move();
+            SnakeGdxGame.stage.Update();
+            SnakeGdxGame.stage.showMatrix();
+            //showBody();
+
         }
-        if(keycode == Input.Keys.A){
-            SnakeGdxGame.positionX -= 10;
-        }
-        if(keycode == Input.Keys.W){
-            SnakeGdxGame.positionY += 10;
-        }
-        if(keycode == Input.Keys.S){
-            SnakeGdxGame.positionY -= 10;
-        }
+
         return true;
     }
 
+    private void showBody(){
+        System.out.println("tamaño de la serpiente: "+SnakeGdxGame.stage.getSnake().getBody().size());
+        for (int i = 0; i < SnakeGdxGame.stage.getSnake().getBody().size(); i++){
+            System.out.println("puntoX "+i+"  "+SnakeGdxGame.stage.getSnake().getBody().get(i).x);
+            System.out.println("puntoY "+i+"  "+SnakeGdxGame.stage.getSnake().getBody().get(i).y);
+        }
+    }
 
     @Override
     public boolean keyUp(int keycode) {

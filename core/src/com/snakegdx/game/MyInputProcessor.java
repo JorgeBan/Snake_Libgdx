@@ -1,84 +1,59 @@
 package com.snakegdx.game;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 
-public class MyInputProcessor implements InputProcessor {
+public class MyInputProcessor extends InputAdapter {
 
 
     @Override
     public boolean keyDown(int keycode) {
         if(!SnakeGdxGame.gameOver){
             switch (keycode){
+                case Input.Keys.SPACE:
+                    SnakeGdxGame.pause = !SnakeGdxGame.pause;
+                    break;
+
                 case Input.Keys.W:
-                    SnakeGdxGame.stage.getSnake().changeDirection('U');
+                    if(SnakeGdxGame.previousDirection != 'D'){
+                        SnakeGdxGame.stage.getSnake().changeDirection('U');
+                        SnakeGdxGame.previousDirection = 'U';
+                        SnakeGdxGame.stage.getSnake().move();
+                    }
                     break;
 
                 case Input.Keys.S:
-                    SnakeGdxGame.stage.getSnake().changeDirection('D');
+                    if (SnakeGdxGame.previousDirection != 'U'){
+                        SnakeGdxGame.stage.getSnake().changeDirection('D');
+                        SnakeGdxGame.previousDirection = 'D';
+                        SnakeGdxGame.stage.getSnake().move();
+                    }
                     break;
 
                 case Input.Keys.D:
-                    SnakeGdxGame.stage.getSnake().changeDirection('R');
+                        if(SnakeGdxGame.previousDirection != 'L'){
+                            SnakeGdxGame.stage.getSnake().changeDirection('R');
+                            SnakeGdxGame.previousDirection = 'R';
+                            SnakeGdxGame.stage.getSnake().move();
+                        }
                     break;
 
                 case Input.Keys.A:
-                    SnakeGdxGame.stage.getSnake().changeDirection('L');
+                    if(SnakeGdxGame.previousDirection != 'R'){
+                        SnakeGdxGame.stage.getSnake().changeDirection('L');
+                        SnakeGdxGame.previousDirection = 'L';
+                        SnakeGdxGame.stage.getSnake().move();
+                    }
                     break;
 
             }
 
-            SnakeGdxGame.stage.getSnake().move();
-            SnakeGdxGame.stage.Update();
+            SnakeGdxGame.snakeFlag = true;
             SnakeGdxGame.stage.showMatrix();
-            //showBody();
 
         }
 
         return true;
-    }
-
-    private void showBody(){
-        System.out.println("tamaño de la serpiente: "+SnakeGdxGame.stage.getSnake().getBody().size());
-        for (int i = 0; i < SnakeGdxGame.stage.getSnake().getBody().size(); i++){
-            System.out.println("puntoX "+i+"  "+SnakeGdxGame.stage.getSnake().getBody().get(i).x);
-            System.out.println("puntoY "+i+"  "+SnakeGdxGame.stage.getSnake().getBody().get(i).y);
-        }
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-       public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 }

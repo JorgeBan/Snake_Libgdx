@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Stage {
-    private static final int VALOR_FOOD = 1001;
-    private static final int VALOR_BLOCK = 1002;
+    public static final int VALOR_FOOD = 1001;
+    public static final int VALOR_BLOCK = 1002;
     private final Snake snake;
     private final int width;
     private final int height;
@@ -46,8 +46,11 @@ public class Stage {
         for (int i = 0; i < width; i++){
             stage[i][0] = VALOR_BLOCK;
             stage[i][height-1] = VALOR_BLOCK;
-            stage[0][i] = VALOR_BLOCK;
-            stage[height-1][i] = VALOR_BLOCK;
+        }
+
+        for (int j = 0; j < height; j++){
+            stage[0][j] = VALOR_BLOCK;
+            stage[width-1][j] = VALOR_BLOCK;
         }
     }
 

@@ -7,8 +7,8 @@ import java.util.Random;
 
 public class Food {
 
-    private Point position;
-    private Random random;
+    private final Point position;
+    private final Random random;
 
     public Food(){
         this.position = new Point();

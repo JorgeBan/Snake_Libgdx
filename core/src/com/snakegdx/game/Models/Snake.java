@@ -4,15 +4,14 @@ import com.snakegdx.game.SnakeGdxGame;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Snake {
 
-    private Point position;
+    private final Point position;
     private int length;
-    private int velocity;
+    private final int velocity;
     private char direction;
-    private ArrayList<Point> body;
+    private final ArrayList<Point> body;
 
     public Snake(Point position, int velocity){
         this.position = position;

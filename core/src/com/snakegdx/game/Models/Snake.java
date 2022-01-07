@@ -1,5 +1,6 @@
 package com.snakegdx.game.Models;
 
+import com.snakegdx.game.Screens.GameScreen;
 import com.snakegdx.game.SnakeGdxGame;
 
 import java.awt.Point;
@@ -9,13 +10,11 @@ public class Snake {
 
     private final Point position;
     private int length;
-    private final int velocity;
     private char direction;
     private final ArrayList<Point> body;
 
-    public Snake(Point position, int velocity){
+    public Snake(Point position){
         this.position = position;
-        this.velocity = velocity;
         this.length = 1;
         this.direction = 'S';
         this.body = new ArrayList<>();
@@ -30,19 +29,19 @@ public class Snake {
         switch(direction)
         {
             case 'U':
-                position.y += velocity;
+                position.y += 1;
                 break;
 
             case 'D':
-                position.y -= velocity;
+                position.y -= 1;
                 break;
 
             case 'L':
-                position.x -= velocity;
+                position.x -= 1;
                 break;
 
             case 'R':
-                position.x += velocity;
+                position.x += 1;
                 break;
             default:
                 break;
@@ -60,10 +59,10 @@ public class Snake {
         return position.x == foodPosition.x && position.y == foodPosition.y;
     }
 
-    public boolean checkCollision(){
+    public boolean checkCollision(int width, int height, int [][] stage, int block){
         boolean collision = false;
-        if(position.x > SnakeGdxGame.width - 2 || position.x < 1 ||
-            position.y > SnakeGdxGame.height - 2 || position.y < 1){
+        if(position.x > width - 2 || position.x < 1 ||
+            position.y > height - 2 || position.y < 1){
             collision = true;
         }
 
@@ -72,6 +71,10 @@ public class Snake {
                 collision = true;
                 break;
             }
+        }
+
+        if(stage[position.x][position.y] == block){
+            collision = true;
         }
 
         return collision;
@@ -84,4 +87,5 @@ public class Snake {
     public void increaseSnakeLength() {
         this.length += 1;
     }
+
 }

@@ -2,56 +2,66 @@ package com.snakegdx.game;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
+import com.snakegdx.game.Screens.GameScreen;
 
 public class MyInputProcessor extends InputAdapter {
 
 
     @Override
     public boolean keyDown(int keycode) {
-        if(!SnakeGdxGame.gameOver){
+        if(!GameScreen.gameOver){
             switch (keycode){
                 case Input.Keys.SPACE:
-                    SnakeGdxGame.pause = !SnakeGdxGame.pause;
+                    GameScreen.pause = !GameScreen.pause;
                     break;
 
                 case Input.Keys.W:
-                    if(SnakeGdxGame.previousDirection != 'D'){
-                        SnakeGdxGame.stage.getSnake().changeDirection('U');
-                        SnakeGdxGame.previousDirection = 'U';
-                        SnakeGdxGame.stage.getSnake().move();
+                    if(GameScreen.previousDirection != 'D'){
+                        GameScreen.stage.getSnake().changeDirection('U');
+                        GameScreen.previousDirection = 'U';
+                        GameScreen.stage.getSnake().move();
                     }
                     break;
 
                 case Input.Keys.S:
-                    if (SnakeGdxGame.previousDirection != 'U'){
-                        SnakeGdxGame.stage.getSnake().changeDirection('D');
-                        SnakeGdxGame.previousDirection = 'D';
-                        SnakeGdxGame.stage.getSnake().move();
+                    if (GameScreen.previousDirection != 'U'){
+                        GameScreen.stage.getSnake().changeDirection('D');
+                        GameScreen.previousDirection = 'D';
+                        GameScreen.stage.getSnake().move();
                     }
                     break;
 
                 case Input.Keys.D:
-                        if(SnakeGdxGame.previousDirection != 'L'){
-                            SnakeGdxGame.stage.getSnake().changeDirection('R');
-                            SnakeGdxGame.previousDirection = 'R';
-                            SnakeGdxGame.stage.getSnake().move();
+                        if(GameScreen.previousDirection != 'L'){
+                            GameScreen.stage.getSnake().changeDirection('R');
+                            GameScreen.previousDirection = 'R';
+                            GameScreen.stage.getSnake().move();
                         }
                     break;
 
                 case Input.Keys.A:
-                    if(SnakeGdxGame.previousDirection != 'R'){
-                        SnakeGdxGame.stage.getSnake().changeDirection('L');
-                        SnakeGdxGame.previousDirection = 'L';
-                        SnakeGdxGame.stage.getSnake().move();
+                    if(GameScreen.previousDirection != 'R'){
+                        GameScreen.stage.getSnake().changeDirection('L');
+                        GameScreen.previousDirection = 'L';
+                        GameScreen.stage.getSnake().move();
                     }
                     break;
 
             }
 
-            SnakeGdxGame.snakeFlag = true;
-            SnakeGdxGame.stage.showMatrix();
+            System.out.println(keycode);
+            GameScreen.snakeFlag = true;
 
+        }else {
+            switch (keycode){
+                case Input.Keys.ENTER:
+                    GameScreen.gameOver = false;
+                    break;
+
+                case Input.Keys.ESCAPE:
+                    System.exit(0);
+                    break;
+            }
         }
 
         return true;

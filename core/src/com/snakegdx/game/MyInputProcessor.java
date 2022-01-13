@@ -32,11 +32,11 @@ public class MyInputProcessor extends InputAdapter {
                     break;
 
                 case Input.Keys.D:
-                        if(GameScreen.previousDirection != 'L'){
-                            GameScreen.stage.getSnake().changeDirection('R');
-                            GameScreen.previousDirection = 'R';
-                            GameScreen.stage.getSnake().move();
-                        }
+                    if(GameScreen.previousDirection != 'L'){
+                        GameScreen.stage.getSnake().changeDirection('R');
+                        GameScreen.previousDirection = 'R';
+                        GameScreen.stage.getSnake().move();
+                    }
                     break;
 
                 case Input.Keys.A:
@@ -55,7 +55,14 @@ public class MyInputProcessor extends InputAdapter {
         }else {
             switch (keycode){
                 case Input.Keys.ENTER:
+                    GameScreen.velocity = 200;
+                    GameScreen.level = 0;
+                    GameScreen.score = 0;
+                    GameScreen.nextLevelScore = 50;
+                    GameScreen.previousDirection = 'R';
+                    GameScreen.stage.init(GameScreen.level);
                     GameScreen.gameOver = false;
+
                     break;
 
                 case Input.Keys.ESCAPE:

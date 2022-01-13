@@ -1,22 +1,34 @@
 package com.snakegdx.game.Models;
 
 import com.snakegdx.game.Screens.GameScreen;
-import com.snakegdx.game.SnakeGdxGame;
+
+import com.snakegdx.game.Utilities;
 
 import java.awt.Point;
 import java.util.ArrayList;
 
 public class Snake {
 
-    private final Point position;
+    private Point position;
     private int length;
     private char direction;
-    private final ArrayList<Point> body;
+    private ArrayList<Point> body;
+    private int life;
 
     public Snake(Point position){
         this.position = position;
         this.length = 1;
+        this.life = 3;
         this.direction = 'S';
+        this.body = new ArrayList<>();
+        this.body.add(this.position);
+    }
+
+    public Snake(Point position, int life, char direction){
+        this.position = position;
+        this.length = 1;
+        this.life = life;
+        this.direction = direction;
         this.body = new ArrayList<>();
         this.body.add(this.position);
     }
@@ -49,7 +61,7 @@ public class Snake {
         }
 
         body.add(new Point(position.x, position.y));
-       if(body.size() > length){
+        if(body.size() > length){
             body.remove(0);
         }
     }
@@ -59,21 +71,20 @@ public class Snake {
         return position.x == foodPosition.x && position.y == foodPosition.y;
     }
 
-    public boolean checkCollision(int width, int height, int [][] stage, int block){
+    public boolean checkCollision(int width, int height, int [][] stage){
         boolean collision = false;
         if(position.x > width - 2 || position.x < 1 ||
-            position.y > height - 2 || position.y < 1){
+                position.y > height - 2 || position.y < 1){
             collision = true;
         }
 
         for (int i = 0; i < length - 2; i++){
-            if (position.x == body.get(i).x && position.y == body.get(i).y) {
+            if ((position.x == body.get(i).x && position.y == body.get(i).y)) {
                 collision = true;
                 break;
             }
         }
-
-        if(stage[position.x][position.y] == block){
+       if(stage[position.x][position.y] == Utilities.VALOR_BLOCK){
             collision = true;
         }
 
@@ -86,6 +97,19 @@ public class Snake {
 
     public void increaseSnakeLength() {
         this.length += 1;
+    }
+
+    public void decreaseLife(){
+        this.life -= 1;
+    }
+
+    public int getLife(){
+        return this.life;
+    }
+
+    public void restart(int width, int height){
+            this.body = new ArrayList<>();
+            this.body.add(new Point(width/2, height/2));
     }
 
 }

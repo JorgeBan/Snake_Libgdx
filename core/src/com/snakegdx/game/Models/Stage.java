@@ -1,62 +1,38 @@
 package com.snakegdx.game.Models;
 
-import com.snakegdx.game.SnakeGdxGame;
 
+import com.snakegdx.game.Screens.GameScreen;
+import com.snakegdx.game.Utilities;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
 
 public class Stage {
-    public static final int VALOR_FOOD = 1001;
-    public static final int VALOR_BLOCK = 1002;
     private  Snake snake;
     private final int width;
     private final int height;
     private final Food food;
-    private final int[][] stage;
+    private int[][] stage;
+    private final ArrayList<int[][]> levels;
 
     public Stage(int width, int height, int level) {
         this.width = width;
         this.height = height;
         this.food = new Food();
         this.stage = new int[width][height];
+        this.levels = new ArrayList<>();
         init(level);
     }
 
     public void init(int level){
+        loadLevels();
         this.snake = new Snake(new Point(width/2, height/2));
         for (int i = 0; i < width; i++){
-            for (int j = 0; j < height; j++){
-                this.stage[i][j] = 0;
-            }
+            if (height >= 0) System.arraycopy(levels.get(level)[i], 0, this.stage[i], 0, height);
         }
+        this.stage[snake.getBody().get(0).x][snake.getBody().get(0).y] = 1;
 
-        ArrayList<Point> bodySnake = snake.getBody();
-        for(int i = 0; i < bodySnake.size(); i++){
-            this.stage[bodySnake.get(i).x][bodySnake.get(i).y] = i + 1;
-        }
-
-        if (level == 1) {
-            createBlock();
-        }else {
-            createBlockLevel2();
-        }
         createFood(level);
 
-
-    }
-
-    private void createBlock() {
-        for (int i = 0; i < width; i++){
-            stage[i][0] = VALOR_BLOCK;
-            stage[i][height-1] = VALOR_BLOCK;
-        }
-
-        for (int j = 0; j < height; j++){
-            stage[0][j] = VALOR_BLOCK;
-            stage[width-1][j] = VALOR_BLOCK;
-        }
     }
 
     public int[][] getStage() {
@@ -69,7 +45,7 @@ public class Stage {
         int foodX = this.food.getPosition().x;
         int foodY = this.food.getPosition().y;
         if(this.stage[foodX][foodY] == 0){
-            this.stage[foodX][foodY] = VALOR_FOOD;
+            this.stage[foodX][foodY] = Utilities.VALOR_FOOD;
         }else{
             createFood(level);
         }
@@ -78,24 +54,24 @@ public class Stage {
 
     public void Update(int level){
         for (int i = 0; i < width; i++){
-            for (int j = 0; j < height; j++){
-                this.stage[i][j] = 0;
+            if (height >= 0) System.arraycopy(levels.get(level)[i], 0, this.stage[i], 0, height);
+        }
+        if(!getSnake().checkCollision(width, height, stage)){
+            ArrayList<Point> snakeBody = snake.getBody();
+            for (int i = 0 ; i < snakeBody.size(); i++){
+                this.stage[snakeBody.get(i).x][snakeBody.get(i).y] = i+1;
+            }
+
+            this.stage[food.getPosition().x][food.getPosition().y] = Utilities.VALOR_FOOD;
+        }else {
+            snake.decreaseLife();
+            int snakeLife = snake.getLife();
+            GameScreen.score -= 30;
+            this.snake = new Snake(new Point(width/2, height/2), snakeLife, GameScreen.previousDirection);
+            if(snake.getLife() < 1) {
+                GameScreen.gameOver = true;
             }
         }
-
-        ArrayList<Point> bodySnake = snake.getBody();
-        for(int i = 0; i < bodySnake.size(); i++){
-            this.stage[bodySnake.get(i).x][bodySnake.get(i).y] = i + 1;
-        }
-
-        if(level == 1){
-            createBlock();
-        }else{
-            createBlockLevel2();
-        }
-
-        this.stage[food.getPosition().x][food.getPosition().y] = VALOR_FOOD;
-
     }
 
     public Snake getSnake() {
@@ -115,26 +91,77 @@ public class Stage {
         return height;
     }
 
+    private void loadLevels(){
+        int [][] level1 = {
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+        };
 
-    public void createBlockLevel2(){
-        createBlock();
+        int [][] level2 = {
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,1002,1002,1002,   0,   0,   0,   0,   0,1002,1002,1002,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,1002,1002,1002,   0,   0,   0,   0,   0,1002,1002,1002,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+        };
 
-        stage[width/2][height/2 -2] = VALOR_BLOCK;
-
-        stage[width/2 +1][height/2 -2] = VALOR_BLOCK;
-        stage[width/2 +2][height/2 -2] = VALOR_BLOCK;
-
-        stage[width/2 -1][height/2 -2] = VALOR_BLOCK;
-        stage[width/2 -2][height/2 -2] = VALOR_BLOCK;
-//-------------------------------------------------------
-        stage[width/2][height/2 + 2] = VALOR_BLOCK;
-
-        stage[width/2 +1][height/2 +2] = VALOR_BLOCK;
-        stage[width/2 +2][height/2 +2] = VALOR_BLOCK;
-
-        stage[width/2 -1][height/2 +2] = VALOR_BLOCK;
-        stage[width/2 -2][height/2 +2] = VALOR_BLOCK;
-
-
+        int [][] level3 = {
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,   0,1002,   0,   0,   0,   0,   0,   0,   0,1002,   0,   0,1002},
+                {1002,   0,   0,   0,1002,   0,   0,   0,   0,   0,1002,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,1002,   0,   0,   0,1002,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,1002,   0,   0,   0,1002,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,1002,   0,   0,   0,   0,   0,1002,   0,   0,   0,1002},
+                {1002,   0,   0,1002,   0,   0,   0,   0,   0,   0,   0,1002,   0,   0,1002},
+                {1002,   0,1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,1002},
+                {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
+        };
+        levels.add(level1);
+        levels.add(level2);
+        levels.add(level3);
     }
 }

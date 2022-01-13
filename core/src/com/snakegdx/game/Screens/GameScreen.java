@@ -1,22 +1,26 @@
 package com.snakegdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.snakegdx.game.GameController;
 import com.snakegdx.game.Models.Stage;
 import com.snakegdx.game.MyInputProcessor;
 import com.snakegdx.game.SnakeGdxGame;
+import com.snakegdx.game.Utilities;
+
+import java.awt.Point;
 
 public class GameScreen extends BaseScreen{
 
     private final BitmapFont font;
     private final SpriteBatch batch;
-    private  final Texture imgSnake, imgFood, imgBlock;
-    private int score;
-    private int level;
-    private int velocity;
+    private  final Texture imgSnake, imgFood, imgBlock, imgBody;
+    private final Sound soundEat;
+    private final Sound soundCollision;
 
     private final int width;
     private final int height;
@@ -27,14 +31,19 @@ public class GameScreen extends BaseScreen{
     public static char previousDirection;
     public static boolean snakeFlag;
     public static boolean pause;
-
-
-
+    public static int score;
+    public static int level;
+    public static int nextLevelScore;
+    public static int finalScore;
+    public static int lastLevel;
+    public  static int velocity;
+    public static GameController gameController;
     public GameScreen(SnakeGdxGame game, int width, int height, int size) {
         super(game);
 
         MyInputProcessor myInputProcessor = new MyInputProcessor();
         Gdx.input.setInputProcessor(myInputProcessor);
+
         this.width = width;
         this.height = height;
         this.size = size;
@@ -43,18 +52,23 @@ public class GameScreen extends BaseScreen{
         previousDirection = 'R';
         snakeFlag = false;
         pause = false;
-        level = 1;
         font = new BitmapFont();
         score = 0;
-        level = 1;
+        level = 0;
+        nextLevelScore = 50;
+        lastLevel = 2;
+        finalScore = 0;
         velocity = 200;
-        imgSnake = new Texture("snake.png");
+        imgSnake = new Texture("snake_head.png");
         imgFood = new Texture("food.png");
         imgBlock = new Texture("block.png");
-
+        imgBody = new Texture("snake_body.png");
+        soundEat = Gdx.audio.newSound(Gdx.files.internal("comer.mp3"));
+        soundCollision = Gdx.audio.newSound(Gdx.files.internal("choque.mp3"));
 
         stage = new Stage(width, height, 1);
-
+        gameController = new GameController(stage, width, height, soundEat, soundCollision);
+        gameController.start();
         Gdx.graphics.setWindowedMode(size*stage.getWidth(), size*stage.getHeight());
     }
 
@@ -65,74 +79,40 @@ public class GameScreen extends BaseScreen{
 
     @Override
     public void render(float delta) {
+
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
-            try{
-                Thread.sleep(velocity);
-                logicGame();
-                renderGame();
-            }catch (InterruptedException e){
-                System.out.println(e.toString());
-            }
+        renderGame();
 
         batch.end();
     }
 
-    private void logicGame(){
-        if(score >= 50){
-            level = 2;
-        }
-        if(!pause){
-            if(stage.getSnake().checkCollision(width, height, stage.getStage(), Stage.VALOR_BLOCK)){
-                gameOver = true;
-            }else {
-                if (stage.getSnake().checkEatFood(stage.getFood().getPosition())){
-                    if(level == 2){
-                        velocity -=20;
-                    }
-                    score += 10;
-                    stage.createFood(level);
-                    stage.getSnake().increaseSnakeLength();
-                }
-
-                if(!snakeFlag){
-                    stage.getSnake().changeDirection(previousDirection);
-                    stage.getSnake().move();
-                }
-                stage.Update(level);
-                snakeFlag = false;
-            }
-        }
-
-    }
-
-
     private void renderGame(){
-        if (!gameOver){
-            font.draw(batch, "level: "+level, 200,50);
-            font.draw(batch, "score: "+score,50,50);
-            int[][] matrixStage = stage.getStage();
-            for (int i = 0; i < width; i++){
-                for (int j = 0; j < height ; j++){
-                    if(matrixStage[i][j] == Stage.VALOR_BLOCK){
-                        batch.draw(imgBlock, i*size,j*size,size, size);
-                    }else if(matrixStage[i][j] == Stage.VALOR_FOOD){
-                        batch.draw(imgFood, i*size,j*size,size, size);
-                    }else if(matrixStage[i][j] > 0 && matrixStage[i][j] <= 1000){
-                        batch.draw(imgSnake, i*size,j*size,size,size);
+            if (!gameOver){
+                font.draw(batch, "level: "+(level + 1), 200,50);
+                font.draw(batch, "score: "+score,50,50);
+                font.draw(batch, "velocity: "+velocity,300,50);
+                font.draw(batch, "vidas: "+stage.getSnake().getLife(),400,50);
+                int[][] matrixStage = stage.getStage();
+                for (int i = 0; i < width; i++){
+                    for (int j = 0; j < height ; j++){
+                        if(matrixStage[i][j] == Utilities.VALOR_BLOCK){
+                            batch.draw(imgBlock, i*size,j*size,size, size);
+                        }else if(matrixStage[i][j] == Utilities.VALOR_FOOD){
+                            batch.draw(imgFood, i*size,j*size,size, size);
+                        }else if(matrixStage[i][j] > 0 && matrixStage[i][j] <= 1000){
+                            batch.draw(imgBody, i*size,j*size,size,size);
+                        }
                     }
                 }
-            }
-        }else {
-            level = 1;
-            score = 0;
-            velocity = 200;
-            stage.init(level);
-            font.draw(batch, "GAME OVER",Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-            font.draw(batch, "Enter para reiniciar", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 -50);
-            font.draw(batch, "Esc para Salir", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 -100);
+            }else {
 
-        }
+                font.draw(batch, "GAME OVER",Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+                font.draw(batch, "Puntuacion: "+score,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2-50);
+                font.draw(batch, "Enter para reiniciar", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 -100);
+                font.draw(batch, "Esc para Salir", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 -150);
+
+            }
     }
 
     @Override
@@ -141,6 +121,9 @@ public class GameScreen extends BaseScreen{
         imgSnake.dispose();
         imgBlock.dispose();
         imgFood.dispose();
+        imgBody.dispose();
+        soundEat.dispose();
+        soundCollision.dispose();
     }
 
     @Override
@@ -161,5 +144,14 @@ public class GameScreen extends BaseScreen{
     @Override
     public void hide() {
 
+    }
+
+    private void showMatrix(){
+        for (int i = 0; i < stage.getWidth(); i++){
+            for (int j = 0; j < stage.getHeight(); j++){
+                System.out.print(stage.getStage()[i][j]+"   ");
+            }
+            System.out.println("");
+        }
     }
 }

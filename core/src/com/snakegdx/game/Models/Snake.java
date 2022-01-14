@@ -1,5 +1,6 @@
 package com.snakegdx.game.Models;
 
+import com.snakegdx.game.Controllers.GameController;
 import com.snakegdx.game.Screens.GameScreen;
 
 import com.snakegdx.game.Utilities;
@@ -107,9 +108,5 @@ public class Snake {
         return this.life;
     }
 
-    public void restart(int width, int height){
-            this.body = new ArrayList<>();
-            this.body.add(new Point(width/2, height/2));
-    }
 
 }

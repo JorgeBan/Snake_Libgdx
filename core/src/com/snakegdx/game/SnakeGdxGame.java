@@ -7,10 +7,10 @@ import com.snakegdx.game.Screens.GameScreen;
 public class SnakeGdxGame extends Game {
 
 	private SpriteBatch batch;
-	public static int size;
-	public static int height;
-	public static int width;
-	public static GameScreen gameScreen;
+	private int size;
+	private int height;
+	private int width;
+	private GameScreen gameScreen;
 
 	@Override
 	public void create() {

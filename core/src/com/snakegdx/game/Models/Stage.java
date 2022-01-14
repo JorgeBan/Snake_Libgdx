@@ -1,7 +1,7 @@
 package com.snakegdx.game.Models;
 
 
-import com.snakegdx.game.Screens.GameScreen;
+import com.snakegdx.game.Controllers.GameController;
 import com.snakegdx.game.Utilities;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -14,6 +14,8 @@ public class Stage {
     private int[][] stage;
     private final ArrayList<int[][]> levels;
 
+    private GameController gameController;
+
     public Stage(int width, int height, int level) {
         this.width = width;
         this.height = height;
@@ -24,8 +26,8 @@ public class Stage {
     }
 
     public void init(int level){
-        loadLevels();
         this.snake = new Snake(new Point(width/2, height/2));
+        loadLevels();
         for (int i = 0; i < width; i++){
             if (height >= 0) System.arraycopy(levels.get(level)[i], 0, this.stage[i], 0, height);
         }
@@ -46,10 +48,10 @@ public class Stage {
         int foodY = this.food.getPosition().y;
         if(this.stage[foodX][foodY] == 0){
             this.stage[foodX][foodY] = Utilities.VALOR_FOOD;
+            Update(level);
         }else{
             createFood(level);
         }
-        Update(level);
     }
 
     public void Update(int level){
@@ -61,15 +63,16 @@ public class Stage {
             for (int i = 0 ; i < snakeBody.size(); i++){
                 this.stage[snakeBody.get(i).x][snakeBody.get(i).y] = i+1;
             }
-
             this.stage[food.getPosition().x][food.getPosition().y] = Utilities.VALOR_FOOD;
         }else {
+            gameController.getSoundCollision().play();
             snake.decreaseLife();
             int snakeLife = snake.getLife();
-            GameScreen.score -= 30;
-            this.snake = new Snake(new Point(width/2, height/2), snakeLife, GameScreen.previousDirection);
+            gameController.setScore(gameController.getScore()-Utilities.REDUCE_LIFE);
+            this.snake = new Snake(new Point(width/2, height/2), snakeLife, gameController.getPreviousDirection());
             if(snake.getLife() < 1) {
-                GameScreen.gameOver = true;
+                gameController.getSoundGameOver().play();
+                gameController.setGameOver(true);
             }
         }
     }
@@ -82,15 +85,18 @@ public class Stage {
         return food;
     }
 
-    public int getWidth() {
-        return width;
+
+    public void setGameController(GameController gameController){
+        this.gameController = gameController;
     }
 
-    public int getHeight()
-    {
-        return height;
+    public int getWidth(){
+        return this.width;
     }
 
+    public int getHeight(){
+        return  this.height;
+    }
     private void loadLevels(){
         int [][] level1 = {
                 {1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002,1002},
